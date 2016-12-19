@@ -2,7 +2,7 @@
 
 a wrapper for semantic modal.
 
-## Demo Preview
+## [Demo](https://lsxiao.github.io/semantic-modal)
 ![](https://raw.githubusercontent.com/lsxiao/semantic-modal/master/demo.gif?raw=true)
 
 ## Install
