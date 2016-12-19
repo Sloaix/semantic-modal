@@ -120,7 +120,7 @@ exports.ModalAnimation = ModalAnimation;
 "use strict";
 
 var EnumType_1 = __webpack_require__(0);
-var $ = window['$'];
+var $ = window['jquery'] || window['$'];
 var Util_1 = __webpack_require__(3);
 var Modal = (function () {
     function Modal() {

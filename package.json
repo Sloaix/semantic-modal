@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "semantic-modal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a wrapper for semantic ui modal",
   "homepage": "https://www.gihub.com/lsxiao/semantic-modal",
   "repository": "lsxiao/semantic-modal",
@@ -11,7 +11,7 @@
     "semantic ui",
     "modal"
   ],
-  "main": "./dist/sematic-modal.js",
+  "main": "dist/semantic-modal.js",
   "bugs": {
     "url": "https://github.com/lsxiao/semantic-modal/issues"
   },

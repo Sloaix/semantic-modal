@@ -1,5 +1,5 @@
 import {ModalType, ModalSize, ModalAnimation} from './EnumType';
-let $ = window['$'];
+let $ = window['jquery'] || window['$'];
 import Util from './Util';
 
 export default class Modal {
