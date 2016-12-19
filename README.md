@@ -2,6 +2,9 @@
 
 a wrapper for semantic modal.
 
+## Demo Preview
+![](https://raw.githubusercontent.com/lsxiao/semantic-modal/master/demo.gif?raw=true)
+
 ## Install
 
 ```bash
