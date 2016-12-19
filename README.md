@@ -46,7 +46,7 @@ new SemanticModal
 ```
 
 ### module import
-```
+```javascript
 import {Modal, ModalBuilder, ModalType, ModalSize, ModalAnimation} from 'semantic-modal';
 new ModalBuilder()
      .title('旧信息归档')
