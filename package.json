@@ -1,0 +1,29 @@
+{
+  "name": "semantic-modal",
+  "version": "1.0.0",
+  "description": "a wrapper for semantic ui modal",
+  "homepage": "https://www.gihub.com/lsxiao/semantic-modal",
+  "repository": "lsxiao/semantic-modal",
+  "author": "lsxiao <faith.epiphone@qq.com>",
+  "license": "MIT",
+  "keywords": [
+    "semantic ui",
+    "modal"
+  ],
+  "main": "./dist/sematic-modal.js",
+  "bugs": {
+    "url": "https://github.com/lsxiao/semantic-modal/issues"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.0.0-beta.17",
+    "del": "^2.2.2",
+    "jquery": "^3.1.1",
+    "semantic-ui": "^2.2.6",
+    "typescript": "^2.1.4",
+    "webpack": "^2.2.0-rc.1"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {}
+}
