@@ -1,4 +1,5 @@
 # semantic-modal
+[![npm version](https://badge.fury.io/js/semantic-modal.svg)](https://badge.fury.io/js/semantic-modal)
 
 a wrapper for semantic modal.
 
