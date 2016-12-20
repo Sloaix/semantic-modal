@@ -13,24 +13,29 @@ module.exports = {
         libraryTarget: 'umd' // Possible value - amd, commonjs, commonjs2, commonjs-module, this, var
     },
     resolve: {
-        extensions: ['.ts']
+        extensions: ['.ts', '.js']
     },
     externals: {
-        jquery: 'jQuery',
-        $: 'jQuery'
+        jquery: 'jQuery'
     },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: true,
             include: /\.min\.js$/,
+        }),
+        new webpack.LoaderOptionsPlugin({
             minimize: true
+        }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
         })
     ],
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.ts$/,
-                loader: 'awesome-typescript-loader'
+                use: 'awesome-typescript-loader'
             }
         ]
     }

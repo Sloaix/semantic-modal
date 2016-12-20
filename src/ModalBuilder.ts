@@ -252,6 +252,6 @@ export default class ModalBuilder {
         modal.negativeText = this._negativeText;
         modal.negativeIcon = this._negativeIcon;
 
-        return modal.init();
+        return modal;
     }
 }

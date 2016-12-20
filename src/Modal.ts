@@ -1,5 +1,4 @@
 import {ModalType, ModalSize, ModalAnimation} from './EnumType';
-let $ = window['jquery'] || window['$'];
 import Util from './Util';
 
 export default class Modal {
@@ -120,16 +119,18 @@ export default class Modal {
         this._animation = value;
     }
 
-    public init(): Modal {
+    private init(): Modal {
         if (this._init) {
-            throw new Error('this modal has been initialized');
+            return;
         }
         this._$modal = this.createSemanticModalInstance();
         this._init = true;
         return this;
     }
 
-    public createSemanticModalInstance(): any {
+    private createSemanticModalInstance(): any {
+        let $: any = (<any>window).jQuery || (<any>window).$;
+
         let setting: any = {
             closable: this._closeable,
             duration: this._duration,
@@ -253,14 +254,7 @@ export default class Modal {
     }
 
     private modalInvoke(method: string): any {
-        this.checkInit();
+        this.init();
         return this._$modal.modal(method);
-    }
-
-
-    private checkInit(): void {
-        if (!this._init) {
-            throw new Error(`this modal has'nt been initialized`);
-        }
     }
 }

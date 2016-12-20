@@ -120,7 +120,6 @@ exports.ModalAnimation = ModalAnimation;
 "use strict";
 
 var EnumType_1 = __webpack_require__(0);
-var $ = window['jquery'] || window['$'];
 var Util_1 = __webpack_require__(3);
 var Modal = (function () {
     function Modal() {
@@ -280,13 +279,14 @@ var Modal = (function () {
     });
     Modal.prototype.init = function () {
         if (this._init) {
-            throw new Error('this modal has been initialized');
+            return;
         }
         this._$modal = this.createSemanticModalInstance();
         this._init = true;
         return this;
     };
     Modal.prototype.createSemanticModalInstance = function () {
+        var $ = window.jQuery || window.$;
         var setting = {
             closable: this._closeable,
             duration: this._duration,
@@ -381,13 +381,8 @@ var Modal = (function () {
         this.modalInvoke('toggle');
     };
     Modal.prototype.modalInvoke = function (method) {
-        this.checkInit();
+        this.init();
         return this._$modal.modal(method);
-    };
-    Modal.prototype.checkInit = function () {
-        if (!this._init) {
-            throw new Error("this modal has'nt been initialized");
-        }
     };
     return Modal;
 }());
@@ -537,7 +532,7 @@ var ModalBuilder = (function () {
         modal.negativeCallback = this._negativeCallback;
         modal.negativeText = this._negativeText;
         modal.negativeIcon = this._negativeIcon;
-        return modal.init();
+        return modal;
     };
     return ModalBuilder;
 }());
