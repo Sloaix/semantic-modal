@@ -1,5 +1,5 @@
 import Modal from './Modal';
-import {ModalType, ModalSize, ModalAnimation} from './EnumType';
+import {ModalType, ModalSize, ModalAnimation} from '../Constant/EnumType';
 export default class ModalBuilder {
     private _title: string;//标题
     private _content: string;//内容

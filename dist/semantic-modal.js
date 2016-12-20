@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -95,6 +95,42 @@ var ModalSize;
     ModalSize[ModalSize["LARGE"] = 2] = "LARGE";
 })(ModalSize || (ModalSize = {}));
 exports.ModalSize = ModalSize;
+var ButtonSize;
+(function (ButtonSize) {
+    ButtonSize[ButtonSize["MINI"] = 0] = "MINI";
+    ButtonSize[ButtonSize["TINY"] = 1] = "TINY";
+    ButtonSize[ButtonSize["SMALL"] = 2] = "SMALL";
+    ButtonSize[ButtonSize["MEDIUM"] = 3] = "MEDIUM";
+    ButtonSize[ButtonSize["LARGE"] = 4] = "LARGE";
+    ButtonSize[ButtonSize["BIG"] = 5] = "BIG";
+    ButtonSize[ButtonSize["HUGE"] = 6] = "HUGE";
+})(ButtonSize || (ButtonSize = {}));
+exports.ButtonSize = ButtonSize;
+var Align;
+(function (Align) {
+    Align[Align["CENTER"] = 0] = "CENTER";
+    Align[Align["LEFT"] = 1] = "LEFT";
+    Align[Align["RIGHT"] = 2] = "RIGHT";
+    Align[Align["BOTTOM"] = 3] = "BOTTOM";
+})(Align || (Align = {}));
+exports.Align = Align;
+var Color;
+(function (Color) {
+    Color[Color["RED"] = 0] = "RED";
+    Color[Color["ORANGE"] = 1] = "ORANGE";
+    Color[Color["YELLOW"] = 2] = "YELLOW";
+    Color[Color["OLIVE"] = 3] = "OLIVE";
+    Color[Color["GREEN"] = 4] = "GREEN";
+    Color[Color["TEAL"] = 5] = "TEAL";
+    Color[Color["BLUE"] = 6] = "BLUE";
+    Color[Color["VIOLET"] = 7] = "VIOLET";
+    Color[Color["PURPLE"] = 8] = "PURPLE";
+    Color[Color["PINK"] = 9] = "PINK";
+    Color[Color["BROWN"] = 10] = "BROWN";
+    Color[Color["GREY"] = 11] = "GREY";
+    Color[Color["BLACK"] = 12] = "BLACK";
+})(Color || (Color = {}));
+exports.Color = Color;
 var ModalAnimation;
 (function (ModalAnimation) {
     ModalAnimation[ModalAnimation["SCALE"] = 0] = "SCALE";
@@ -120,7 +156,9 @@ exports.ModalAnimation = ModalAnimation;
 "use strict";
 
 var EnumType_1 = __webpack_require__(0);
-var Util_1 = __webpack_require__(3);
+var Util_1 = __webpack_require__(5);
+var ActionButton_1 = __webpack_require__(3);
+var Actions_1 = __webpack_require__(4);
 var Modal = (function () {
     function Modal() {
         this._positiveIcon = 'ok';
@@ -332,29 +370,35 @@ var Modal = (function () {
         if (this._content) {
             $modal.append("<div class='content' style='" + (isBasic ? ';text-align:center;' : '') + (!this._title ? ';margin-top:1.5rem;' : '') + "'><p style='word-break: break-all;word-wrap: break-word'>" + this._content + "</p></div>");
         }
-        var $actions = $("<div class='actions' style='border: none;background:none;" + (isBasic ? 'text-align:center;' : '') + "'></div>");
+        var actionsBuilder = new Actions_1.ActionsBuilder();
+        if (isBasic) {
+            actionsBuilder.align(EnumType_1.Align.CENTER);
+        }
         if (this._showNegativeButton) {
+            var buttonBuilder = new ActionButton_1.ActionButtonBuilder()
+                .negative(true)
+                .text(this._negativeText)
+                .icon(this._negativeIcon)
+                .appendClasses(this._negativeAppendClasses);
             if (isBasic) {
-                this._negativeAppendClasses += ' red basic inverted ';
+                buttonBuilder.color(EnumType_1.Color.RED).basic(true).inverted(true);
             }
-            var $button = $("<div class='ui mini negative button " + this._negativeAppendClasses + "'>" + this._negativeText + "</div>");
-            if (this._negativeIcon) {
-                $button.prepend("<i class='" + this._negativeIcon + " icon'></i>");
-            }
-            $actions.append($button);
+            actionsBuilder.add(buttonBuilder.build());
         }
         if (this._showPositiveButton) {
+            var buttonBuilder = new ActionButton_1.ActionButtonBuilder()
+                .positive(true)
+                .text(this._positiveText)
+                .icon(this._positiveIcon)
+                .appendClasses(this._positiveAppendClasses);
             if (isBasic) {
-                this._positiveAppendClasses += ' green inverted ';
+                buttonBuilder.color(EnumType_1.Color.GREEN).basic(false).inverted(true);
             }
-            var $button = $("<div class='ui mini positive button " + this._positiveAppendClasses + "'>" + this._positiveText + "</div>");
-            if (this._positiveIcon) {
-                $button.prepend("<i class='" + this._positiveIcon + " icon'></i>");
-            }
-            $actions.append($button);
+            actionsBuilder.add(buttonBuilder.build());
         }
-        if ($actions.children('.ui.button').length > 0) {
-            $modal.append($actions);
+        var hasButtons = this._showNegativeButton || this._showPositiveButton;
+        if (hasButtons) {
+            $modal.append(actionsBuilder.build().getDom());
         }
         if (this._positiveCallback instanceof Function) {
             setting.onApprove = this._positiveCallback;
@@ -370,6 +414,8 @@ var Modal = (function () {
         }
         $modal.modal(setting);
         return $modal;
+    };
+    Modal.prototype.createActionButton = function () {
     };
     Modal.prototype.show = function () {
         this.modalInvoke('show');
@@ -546,6 +592,317 @@ exports.default = ModalBuilder;
 
 "use strict";
 
+var EnumType_1 = __webpack_require__(0);
+var ActionButtonBuilder = (function () {
+    function ActionButtonBuilder() {
+        this._text = '';
+        this._icon = '';
+        this._basic = false;
+        this._inverted = false;
+        this._size = EnumType_1.ButtonSize.MEDIUM;
+        this._appendClasses = '';
+        this._loading = false;
+        this._circle = false;
+        this._disabled = false;
+        this._active = false;
+        this._negative = false;
+        this._positive = false;
+    }
+    ActionButtonBuilder.prototype.text = function (value) {
+        this._text = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.icon = function (value) {
+        this._icon = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.color = function (value) {
+        this._color = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.basic = function (value) {
+        this._basic = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.inverted = function (value) {
+        this._inverted = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.size = function (value) {
+        this._size = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.appendClasses = function (value) {
+        this._appendClasses = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.loading = function (value) {
+        this._loading = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.circle = function (value) {
+        this._circle = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.disabled = function (value) {
+        this._disabled = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.actvie = function (value) {
+        this._active = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.negative = function (value) {
+        this._negative = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.positive = function (value) {
+        this._positive = value;
+        return this;
+    };
+    ActionButtonBuilder.prototype.build = function () {
+        var button = new ActionButton();
+        button.text = this._text;
+        button.icon = this._icon;
+        button.color = this._color;
+        button.basic = this._basic;
+        button.inverted = this._inverted;
+        button.size = this._size;
+        button.appendClasses = this._appendClasses;
+        button.loading = this._loading;
+        button.circle = this._circle;
+        button.disabled = this._disabled;
+        button.active = this._active;
+        button.negative = this._negative;
+        button.positive = this._positive;
+        return button;
+    };
+    return ActionButtonBuilder;
+}());
+exports.ActionButtonBuilder = ActionButtonBuilder;
+var ActionButton = (function () {
+    function ActionButton() {
+    }
+    Object.defineProperty(ActionButton.prototype, "text", {
+        set: function (value) {
+            this._text = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "icon", {
+        set: function (value) {
+            this._icon = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "color", {
+        set: function (value) {
+            this._color = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "basic", {
+        set: function (value) {
+            this._basic = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "inverted", {
+        set: function (value) {
+            this._inverted = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "size", {
+        set: function (value) {
+            this._size = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "appendClasses", {
+        set: function (value) {
+            this._appendClasses = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "loading", {
+        set: function (value) {
+            this._loading = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "circle", {
+        set: function (value) {
+            this._circle = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "disabled", {
+        set: function (value) {
+            this._disabled = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "active", {
+        set: function (value) {
+            this._active = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "negative", {
+        set: function (value) {
+            this._negative = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ActionButton.prototype, "positive", {
+        set: function (value) {
+            this._positive = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ActionButton.prototype.getDom = function () {
+        if (this._dom) {
+            return this._dom;
+        }
+        return this.createDom();
+    };
+    ActionButton.prototype.createDom = function () {
+        var $ = window.jQuery || window.$;
+        var $dom = $("<div class=\"ui button\">" + this._text + "</div>");
+        if (this._icon) {
+            $dom.prepend("<i class=\"icon " + this._icon + "\"></i>");
+        }
+        if (this._color != null) {
+            $dom.addClass(EnumType_1.Color[this._color].toLowerCase());
+        }
+        if (this._basic) {
+            $dom.addClass('basic');
+        }
+        if (this._inverted) {
+            $dom.addClass('inverted');
+        }
+        if (this._size != null) {
+            $dom.addClass(EnumType_1.ButtonSize[this._size].toLowerCase());
+        }
+        if (this._loading) {
+            $dom.addClass('loading');
+        }
+        if (this._circle) {
+            $dom.addClass('circular');
+        }
+        if (this._disabled) {
+            $dom.addClass('disabled');
+        }
+        if (this._active) {
+            $dom.addClass('active');
+        }
+        if (this._negative) {
+            $dom.addClass('negative');
+        }
+        if (this._positive) {
+            $dom.addClass('positive');
+        }
+        if (this._appendClasses) {
+            $dom.addClass(this._appendClasses);
+        }
+        return this._dom = $dom;
+    };
+    return ActionButton;
+}());
+exports.ActionButton = ActionButton;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var EnumType_1 = __webpack_require__(0);
+var ActionsBuilder = (function () {
+    function ActionsBuilder() {
+        this._buttons = [];
+        this._align = EnumType_1.Align.RIGHT;
+    }
+    ActionsBuilder.prototype.add = function (button) {
+        this._buttons.push(button);
+        return this;
+    };
+    ActionsBuilder.prototype.align = function (value) {
+        this._align = value;
+        return this;
+    };
+    ActionsBuilder.prototype.build = function () {
+        var actions = new Actions();
+        actions.align = this._align;
+        actions.buttons = this._buttons;
+        return actions;
+    };
+    return ActionsBuilder;
+}());
+exports.ActionsBuilder = ActionsBuilder;
+var Actions = (function () {
+    function Actions() {
+    }
+    Object.defineProperty(Actions.prototype, "buttons", {
+        set: function (value) {
+            this._buttons = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Actions.prototype, "align", {
+        set: function (value) {
+            this._align = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Actions.prototype.getDom = function () {
+        if (this._dom) {
+            return this._dom;
+        }
+        return this.createDom();
+    };
+    Actions.prototype.createDom = function () {
+        var $ = window.jQuery || window.$;
+        var $dom = $("<div class='actions'></div>");
+        if (this._align != null) {
+            $dom.css('text-align', EnumType_1.Align[this._align].toLowerCase());
+        }
+        if (this._buttons && this._buttons.length > 0) {
+            for (var _i = 0, _a = this._buttons; _i < _a.length; _i++) {
+                var button = _a[_i];
+                $dom.append(button.getDom());
+            }
+        }
+        return this._dom = $dom;
+    };
+    return Actions;
+}());
+exports.Actions = Actions;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var Util = (function () {
     function Util() {
     }
@@ -565,7 +922,7 @@ exports.default = Util;
 
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";

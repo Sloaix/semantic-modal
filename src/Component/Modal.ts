@@ -1,5 +1,7 @@
-import {ModalType, ModalSize, ModalAnimation} from './EnumType';
-import Util from './Util';
+import {ModalType, ModalSize, ModalAnimation, Color, Align} from '../Constant/EnumType';
+import Util from '../Tool/Util';
+import {ActionButtonBuilder, ActionButton} from "./ActionButton";
+import {ActionsBuilder} from "./Actions";
 
 export default class Modal {
     private _title: string;//标题
@@ -128,6 +130,9 @@ export default class Modal {
         return this;
     }
 
+    /**
+     * 构建semantic modal 插件实例
+     */
     private createSemanticModalInstance(): any {
         let $: any = (<any>window).jQuery || (<any>window).$;
 
@@ -194,33 +199,42 @@ export default class Modal {
             $modal.append(`<div class='content' style='${isBasic ? ';text-align:center;' : ''}${!this._title ? ';margin-top:1.5rem;' : ''}'><p style='word-break: break-all;word-wrap: break-word'>${this._content}</p></div>`);
         }
 
-        //actions按钮
-        let $actions: any = $(`<div class='actions' style='border: none;background:none;${isBasic ? 'text-align:center;' : ''}'></div>`);
+        //actions
+        let actionsBuilder: ActionsBuilder = new ActionsBuilder();
+        if (isBasic) {
+            actionsBuilder.align(Align.CENTER);
+        }
+
         if (this._showNegativeButton) {
+            let buttonBuilder = new ActionButtonBuilder()
+                .negative(true)
+                .text(this._negativeText)
+                .icon(this._negativeIcon)
+                .appendClasses(this._negativeAppendClasses);
             if (isBasic) {
-                this._negativeAppendClasses += ' red basic inverted ';
+                buttonBuilder.color(Color.RED).basic(true).inverted(true);
             }
-            let $button: any = $(`<div class='ui mini negative button ${this._negativeAppendClasses}'>${this._negativeText}</div>`);
-            if (this._negativeIcon) {
-                $button.prepend(`<i class='${this._negativeIcon} icon'></i>`);
-            }
-            $actions.append($button);
+            actionsBuilder.add(buttonBuilder.build());
         }
 
         if (this._showPositiveButton) {
+            let buttonBuilder = new ActionButtonBuilder()
+                .positive(true)
+                .text(this._positiveText)
+                .icon(this._positiveIcon)
+                .appendClasses(this._positiveAppendClasses);
             if (isBasic) {
-                this._positiveAppendClasses += ' green inverted ';
+                buttonBuilder.color(Color.GREEN).basic(false).inverted(true);
             }
-            let $button = $(`<div class='ui mini positive button ${this._positiveAppendClasses}'>${this._positiveText}</div>`);
-            if (this._positiveIcon) {
-                $button.prepend(`<i class='${this._positiveIcon} icon'></i>`);
-            }
-            $actions.append($button);
+            actionsBuilder.add(buttonBuilder.build());
         }
 
-        if ($actions.children('.ui.button').length > 0) {
-            $modal.append($actions);
+        let hasButtons: boolean = this._showNegativeButton || this._showPositiveButton;
+
+        if (hasButtons) {
+            $modal.append(actionsBuilder.build().getDom());
         }
+
         //回调函数
         if (this._positiveCallback instanceof Function) {
             setting.onApprove = this._positiveCallback;
@@ -239,6 +253,13 @@ export default class Modal {
         $modal.modal(setting);
 
         return $modal;
+    }
+
+    /**
+     * 创建actionButton
+     */
+    private createActionButton(): any {
+
     }
 
     public show(): void {

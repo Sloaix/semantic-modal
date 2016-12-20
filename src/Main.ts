@@ -1,4 +1,4 @@
-import ModalBuilder from "./ModalBuilder";
-import Modal from "./Modal";
-import {ModalType, ModalSize, ModalAnimation} from "./EnumType";
+import ModalBuilder from "./Component/ModalBuilder";
+import Modal from "./Component/Modal";
+import {ModalType, ModalSize, ModalAnimation} from "./Constant/EnumType";
 export {Modal, ModalBuilder, ModalType, ModalSize, ModalAnimation};
